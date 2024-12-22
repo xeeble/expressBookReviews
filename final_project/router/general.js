@@ -29,14 +29,35 @@ public_users.post("/register", (req,res) => {
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
   //Write your code here
-  res.send(JSON.stringify({books},null,4));
+  new Promise((resolve, reject) => {
+    resolve(JSON.stringify(books));
+})
+    .then(data => {
+        res.status(200).json(data);
+    })
+    .catch(error => {
+        res.status(500).json({ message: "Error" });
+    });
 });
 
 // Get book details based on ISBN
 public_users.get("/isbn/:isbn", async function (req, res) {
     //Write your code here   
-    const ISBN = req.params.isbn;   
-    res.send(books[ISBN]);
+    new Promise((resolve, reject) => {
+        const ISBN = req.params.isbn;
+        const book = books[ISBN];
+        if(!book)
+        {
+            reject("Book not found!");
+        } else {
+            resolve(books[ISBN]);
+        }
+    })
+    .then((book) => {res.status(200).json(book);
+    })
+    .catch(error => {
+        res.status(500).json({ message: "Error" });
+    });
 });
   
   
@@ -54,7 +75,7 @@ public_users.get('/author/:author',function (req, res) {
     }) .then(data => {
         res.status(200).json(data);
     }).catch(error => {
-        res.status(404).json({ message: "No books Found." });
+        res.status(404).json({ message: "Error." });
     });
 });
 
@@ -72,7 +93,7 @@ public_users.get('/title/:title',function (req, res) {
     }) .then(data => {
         res.status(200).json(data);
     }).catch(error => {
-        res.status(404).json({ message: "No books Found." });
+        res.status(404).json({ message: "Error." });
     });
 });
 
