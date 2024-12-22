@@ -12,7 +12,7 @@ public_users.post("/register", (req,res) => {
   // Check if both username and password are provided
   if (username && password) {
       // Check if the user does not already exist
-      if (users.some(u => u.username === username)) {
+      if (users.find(user => user.username === username)) {
         return res.status(404).json({message: "User already exists!"});
       } else {
         // Add the new user to the users array
@@ -36,7 +36,7 @@ public_users.get('/',function (req, res) {
         res.status(200).json(data);
     })
     .catch(error => {
-        res.status(500).json({ message: "Error" });
+        res.status(500).json({ message: "Error." });
     });
 });
 
@@ -56,7 +56,7 @@ public_users.get("/isbn/:isbn", async function (req, res) {
     .then((book) => {res.status(200).json(book);
     })
     .catch(error => {
-        res.status(500).json({ message: "Error" });
+        res.status(500).json({ message: "Error." });
     });
 });
   
@@ -66,11 +66,11 @@ public_users.get('/author/:author',function (req, res) {
   //Write your code here
   new Promise((resolve, reject) => {
     const author = req.params.author;
-    const booksByAuthor = Object.values(books).filter(book => book.author === author);
+    const matchingBooks = Object.values(books).filter((book) => book.author === author);
     if (booksByAuthor.length === 0) {
         reject("No books found by this author.");
     } else {
-        resolve(booksByAuthor);
+        resolve(matchingBooks);
     }
     }) .then(data => {
         res.status(200).json(data);
@@ -84,11 +84,11 @@ public_users.get('/title/:title',function (req, res) {
   //Write your code here
   new Promise((resolve, reject) => {
     const title = req.params.title;
-    const booksByTitle = Object.values(books).filter(book => book.title === title);
+    const matchingBooks = Object.values(books).filter(book => book.title === title);
     if (booksByTitle.length === 0) {
         reject("No books found with this title");
     } else {
-        resolve(booksByTitle);
+        resolve(matchingBooks);
     }
     }) .then(data => {
         res.status(200).json(data);
@@ -102,8 +102,8 @@ public_users.get('/review/:isbn',function (req, res) {
   //Write your code here
   const ISBN = req.params.isbn;
   let book = books[ISBN];
-  const reviewByISBN = book.reviews;
-  res.send(reviewByISBN);
+  const reviews = book.reviews;
+  res.send(reviews);
 });
 
 module.exports.general = public_users;
